@@ -10,3 +10,9 @@ POST http://localhost:80/task/list
 
 
 ###
+POST http://localhost:80/api/item
+Content-Type: application/json
+
+{}
+
+###
