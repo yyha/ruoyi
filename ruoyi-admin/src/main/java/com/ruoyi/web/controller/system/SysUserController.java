@@ -1,6 +1,8 @@
 package com.ruoyi.web.controller.system;
 
+import com.ruoyi.app.domain.village.CctVillage;
 import com.ruoyi.app.service.task.ICctUserTaskService;
+import com.ruoyi.app.service.village.ICctVillageService;
 import com.ruoyi.common.annotation.Log;
 import com.ruoyi.common.constant.UserConstants;
 import com.ruoyi.common.core.controller.BaseController;
@@ -23,6 +25,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -47,6 +50,9 @@ public class SysUserController extends BaseController {
 
     @Autowired
     private ICctUserTaskService iCctUserTaskService;
+
+    @Autowired
+    private ICctVillageService villageService;
 
     @RequiresPermissions("system:user:view")
     @GetMapping()
@@ -255,5 +261,25 @@ public class SysUserController extends BaseController {
         userService.updateUserInfo(user);
         return success();
     }
+
+    /**
+     * 通过用户ID查询用户
+     *
+     * param      userId  用户id
+     */
+    @GetMapping("userDetailsVillage/{userId}")
+    @ResponseBody
+    public AjaxResult userDetailsVillage(@PathVariable("userId") Long userId) {
+        //拿出用户对象
+        SysUser sysUser = userService.selectUserById(userId);
+        //查处村子
+        CctVillage cctVillage = villageService.selectCctVillageById(sysUser.getvId());
+        Map map = new HashMap();
+        map.put("user",sysUser);
+        map.put("village",cctVillage);
+        return AjaxResult.success(map);
+    }
+
+
 
 }
