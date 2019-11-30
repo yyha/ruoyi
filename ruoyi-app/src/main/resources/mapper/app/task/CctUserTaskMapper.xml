@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.app.mapper.task.CctUserTaskMapper">
+    
+    <resultMap type="com.ruoyi.app.domain.task.CctUserTask" id="CctUserTaskResult">
+        <result property="id"    column="id"    />
+        <result property="userId"    column="user_id"    />
+        <result property="userName"    column="user_name"    />
+        <result property="taskId"    column="task_id"    />
+        <result property="status"    column="status"    />
+        <result property="applyType"    column="apply_type"    />
+        <result property="delayReason"    column="delay_reason"    />
+        <result property="delayto"    column="delayto"    />
+        <result property="image"    column="image"    />
+        <result property="address"    column="address"    />
+        <result property="personNum"    column="person_num"  jdbcType="INTEGER"  />
+        <result property="finishTime"    column="finish_time"    />
+        <result property="cancelReason"    column="cancel_reason"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="publishTime"    column="publish_time"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="finishdate"    column="finishdate"    />
+        <result property="title"    column="title"    />
+        <result property="type"    column="type"    />
+        <result property="paymentType"    column="payment_type"    />
+        <result property="applyAudit"    column="apply_audit"    />
+        <result property="money"    column="money"    />
+    </resultMap>
+
+    <sql id="selectCctUserTaskVo">
+        select id, user_id, task_id, status, apply_type, delay_reason, delayto, finish_time, cancel_reason, create_time, update_time from cct_user_task
+    </sql>
+
+    <select id="selectCctUserTaskList" parameterType="CctUserTask" resultMap="CctUserTaskResult">
+        SELECT
+        us.id,
+        task.title,
+        us.task_id,
+        task.money,
+        task.image,
+        task.address,
+        task.type,
+        task.payment_type,
+        task.finishdate,
+        us.create_time,
+        us.STATUS
+        FROM
+        cct_user_task us
+        LEFT JOIN cct_task task
+        on task.t_id = us.task_id
+        <where>
+            <if test="id != null "> and id = #{id}</if>
+            <if test="userId != null "> and user_id = #{userId}</if>
+            <if test="taskId != null "> and task_id = #{taskId}</if>
+            <if test="status != null "> and status = #{status}</if>
+            <if test="applyType != null "> and apply_type = #{applyType}</if>
+            <if test="delayReason != null  and delayReason != ''"> and delay_reason = #{delayReason}</if>
+            <if test="delayto != null "> and delayto = #{delayto}</if>
+            <if test="finishTime != null "> and finish_time = #{finishTime}</if>
+            <if test="paymentType != null and paymentType != ''"> and payment_type = #{paymentType}</if>
+            <if test="type != null"> and task.type = #{type}</if>
+            <if test="title != null and title != ''"> and title like concat('%',#{title},'%')</if>
+            <if test="cancelReason != null  and cancelReason != ''"> and cancel_reason = #{cancelReason}</if>
+        </where>
+    </select>
+
+    
+    <select id="selectCctUserTaskById" parameterType="Long" resultMap="CctUserTaskResult">
+          SELECT
+        us.task_id,
+        us.user_id,
+        us.apply_type,
+        task.title,
+        task.money,
+        task.type,
+        task.image,
+        task.address,
+        task.person_num,
+        task.create_time as publish_time,
+        us.create_time,
+        us.STATUS
+    FROM
+        cct_user_task us
+        LEFT JOIN cct_task task ON task.t_id = us.task_id
+    WHERE  us.id = #{id}
+    </select>
+    <select id="selectCCtTaskJoinUserNum" resultType="java.lang.Integer">
+         SELECT count(1) FROM cct_user_task WHERE task_id = #{id} AND `status` BETWEEN 0 and 5
+    </select>
+
+    <select id="selectDelayTaskList" resultMap="CctUserTaskResult">
+        SELECT
+        us.id,
+        task.title,
+        us.create_time,
+        us.status,
+        us.delay_reason ,
+        us.cancel_reason,
+        us.delayto,
+        us.apply_audit,
+        u.user_name
+        FROM
+        cct_user_task us
+        LEFT JOIN cct_task task
+        on task.t_id = us.task_id
+        left join sys_user u
+        on u.user_id = us.user_id
+        <where>
+            <if test="applyType != null"> and us.apply_type = #{applyType}</if>
+            <if test="status != null"> and us.status = #{status}</if>
+            <if test="title != null and title != ''"> and task.title like concat('%',#{title},'%') </if>
+            <if test="userName != null and userName != ''"> and u.user_name like concat('%',#{userName},'%')</if>
+            <if test="delayReason != null  and delayReason != ''"> and us.delay_reason like concat('%',#{delayReason},'%')</if>
+            <if test="cancelReason != null  and cancelReason != ''"> and us.cancel_reason like concat('%',#{cancelReason},'%')</if>
+            <if test="applyAudit != null"> and us.apply_audit = #{applyAudit}</if>
+        </where>
+
+    </select>
+    <select id="selectCctUserTaskByTaskId" parameterType="CctUserTask" resultType="CctUserTask">
+        select * from cct_user_task where task_id = #{taskId} and user_id = #{userId}
+
+    </select>
+    <select id="selectUserTaskStatusCount" resultType="java.util.Map">
+        select A.unfinished,B.finish
+        from (
+        SELECT count(1) unfinished FROM cct_user_task WHERE user_id =#{userId} AND status &lt; 4) A,
+        (
+        SELECT count(1) finish FROM cct_user_task WHERE user_id = #{userId} AND status = 4) B
+    </select>
+
+    <insert id="insertCctUserTask" parameterType="CctUserTask" useGeneratedKeys="true" keyProperty="id">
+        insert into cct_user_task
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="taskId != null ">task_id,</if>
+            <if test="userId != null ">user_id,</if>
+            <if test="status != null ">status,</if>
+            <if test="applyType != null ">apply_type,</if>
+            <if test="delayReason != null  and delayReason != ''">delay_reason,</if>
+            <if test="delayto != null ">delayto,</if>
+            <if test="finishTime != null ">finish_time,</if>
+            <if test="cancelReason != null  and cancelReason != ''">cancel_reason,</if>
+            <if test="createTime != null ">create_time,</if>
+            <if test="updateTime != null ">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="taskId != null ">#{taskId},</if>
+            <if test="userId != null ">#{userId},</if>
+            <if test="status != null ">#{status},</if>
+            <if test="applyType != null ">#{applyType},</if>
+            <if test="delayReason != null  and delayReason != ''">#{delayReason},</if>
+            <if test="delayto != null ">#{delayto},</if>
+            <if test="finishTime != null ">#{finishTime},</if>
+            <if test="cancelReason != null  and cancelReason != ''">#{cancelReason},</if>
+            <if test="createTime != null ">#{createTime},</if>
+            <if test="updateTime != null ">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateCctUserTask" parameterType="CctUserTask">
+        update cct_user_task
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="taskId != null ">task_id = #{taskId},</if>
+            <if test="status != null ">status = #{status},</if>
+            <if test="applyType != null ">apply_type = #{applyType},</if>
+            <if test="delayReason != null  and delayReason != ''">delay_reason = #{delayReason},</if>
+            <if test="delayto != null ">delayto = #{delayto},</if>
+            <if test="finishTime != null ">finish_time = #{finishTime},</if>
+            <if test="cancelReason != null  and cancelReason != ''">cancel_reason = #{cancelReason},</if>
+            <if test="createTime != null ">create_time = #{createTime},</if>
+            <if test="updateTime != null ">update_time = #{updateTime},</if>
+            <if test="applyAudit != null ">apply_audit = #{applyAudit},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteCctUserTaskById" parameterType="Long">
+        delete from cct_user_task where user_id = #{userId}
+    </delete>
+
+    <delete id="deleteCctUserTaskByIds" parameterType="String">
+        delete from cct_user_task where user_id in 
+        <foreach item="userId" collection="array" open="(" separator="," close=")">
+            #{userId}
+        </foreach>
+    </delete>
+    
+</mapper>

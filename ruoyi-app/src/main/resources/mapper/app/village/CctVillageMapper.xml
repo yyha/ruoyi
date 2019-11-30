@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.app.mapper.village.CctVillageMapper">
+    
+    <resultMap type="com.ruoyi.app.domain.village.CctVillage" id="CctVillageResult">
+        <result property="vId"    column="v_id"    />
+        <result property="vName"    column="v_name"    />
+        <result property="vImage"    column="v_image"    />
+        <result property="recommend"    column="recommend"    />
+    </resultMap>
+
+    <sql id="selectCctVillageVo">
+        select * from cct_village
+    </sql>
+
+    <select id="selectCctVillageList" parameterType="CctVillage" resultMap="CctVillageResult">
+        <include refid="selectCctVillageVo"/>
+        <where>  
+            <if test="vName != null  and vName != ''"> and v_name like concat('%', #{vName}, '%')</if>
+        </where>
+    </select>
+    
+    <select id="selectCctVillageById" parameterType="Long" resultMap="CctVillageResult">
+        <include refid="selectCctVillageVo"/>
+        where v_id = #{vId}
+    </select>
+    <select id="getHotVillage" resultMap="CctVillageResult">
+                   SELECT
+            village.*
+        FROM
+            cct_village village
+            LEFT JOIN sys_user u ON village.v_id = u.v_id
+            AND u.v_id IS NOT NULL
+        GROUP BY
+            village.v_id
+        ORDER BY
+            count( u.user_id ) DESC limit 3
+    </select>
+
+    <insert id="insertCctVillage" parameterType="CctVillage" useGeneratedKeys="true" keyProperty="vId">
+        insert into cct_village
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="vName != null  and vName != ''">v_name,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="vName != null  and vName != ''">#{vName},</if>
+         </trim>
+    </insert>
+
+    <update id="updateCctVillage" parameterType="CctVillage">
+        update cct_village
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="vName != null  and vName != ''">v_name = #{vName},</if>
+        </trim>
+        where v_id = #{vId}
+    </update>
+
+    <delete id="deleteCctVillageById" parameterType="Long">
+        delete from cct_village where v_id = #{vId}
+    </delete>
+
+    <delete id="deleteCctVillageByIds" parameterType="String">
+        delete from cct_village where v_id in 
+        <foreach item="vId" collection="array" open="(" separator="," close=")">
+            #{vId}
+        </foreach>
+    </delete>
+
+    <update id="updateRecommend" parameterType="CctVillage" >
+        UPDATE cct_village
+SET recommend = #{recommend}
+WHERE
+	v_id =#{vId}
+    </update>
+
+    <select id="selectRecommendVillage" resultMap="CctVillageResult">
+        select * from cct_village where recommend=true
+    </select>
+    
+</mapper>

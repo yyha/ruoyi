@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.app.mapper.wallet.CctUserMoneyMapper">
+    
+    <resultMap type="CctUserMoney" id="CctUserMoneyResult">
+        <result property="id"    column="id"    />
+        <result property="uId"    column="u_id"    />
+        <result property="money"    column="money"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectCctUserMoneyVo">
+        select id, u_id, money, create_time, update_time from cct_user_money
+    </sql>
+
+    <select id="selectCctUserMoneyList" parameterType="CctUserMoney" resultMap="CctUserMoneyResult">
+        <include refid="selectCctUserMoneyVo"/>
+        <where>  
+            <if test="uId != null "> and u_id = #{uId}</if>
+            <if test="money != null "> and money = #{money}</if>
+        </where>
+    </select>
+    
+    <select id="selectCctUserMoneyById" parameterType="Integer" resultMap="CctUserMoneyResult">
+        <include refid="selectCctUserMoneyVo"/>
+        where id = #{id}
+    </select>
+    <select id="selectCctUserMoneyByUserId" parameterType="Integer" resultMap="CctUserMoneyResult">
+        <include refid="selectCctUserMoneyVo"/>
+        where u_id = #{id}
+    </select>
+    <insert id="insertCctUserMoney" parameterType="CctUserMoney">
+        insert into cct_user_money
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null ">id,</if>
+            <if test="uId != null ">u_id,</if>
+            <if test="money != null ">money,</if>
+            <if test="createTime != null ">create_time,</if>
+            <if test="updateTime != null ">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null ">#{id},</if>
+            <if test="uId != null ">#{uId},</if>
+            <if test="money != null ">#{money},</if>
+            <if test="createTime != null ">#{createTime},</if>
+            <if test="updateTime != null ">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateCctUserMoney" parameterType="CctUserMoney">
+        update cct_user_money
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="uId != null ">u_id = #{uId},</if>
+            <if test="money != null ">money = #{money},</if>
+            <if test="createTime != null ">create_time = #{createTime},</if>
+            <if test="updateTime != null ">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteCctUserMoneyById" parameterType="Integer">
+        delete from cct_user_money where id = #{id}
+    </delete>
+
+    <delete id="deleteCctUserMoneyByIds" parameterType="String">
+        delete from cct_user_money where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    
+</mapper>

@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.app.mapper.me.CctMeMessageMapper">
+
+    <resultMap type="CctMeMessage" id="CctMeMessageResult">
+        <result property="id" column="id"/>
+        <result property="userId" column="user_id"/>
+        <result property="title" column="title"/>
+        <result property="content" column="content"/>
+        <result property="isread" column="isread"/>
+        <result property="sendTime" column="send_time"/>
+        <result property="source" column="source"/>
+    </resultMap>
+
+    <sql id="selectCctMeMessageVo">
+        select id, user_id, title, content, isread, send_time from cct_me_message
+    </sql>
+
+    <!--    <select id="selectCctMeMessageList" parameterType="CctMeMessage" resultMap="CctMeMessageResult">-->
+    <!--        <include refid="selectCctMeMessageVo"/>-->
+    <!--        <where>  -->
+    <!--            <if test="userId != null "> and user_id = #{userId}</if>-->
+    <!--            <if test="title != null  and title != ''"> and title like concat('%',#{title},'%')</if>-->
+    <!--            <if test="content != null  and content != ''"> and content like concat('%',#{content},'%')</if>-->
+    <!--            <if test="isread != null and isread != ''"> and isread = #{isread}</if>-->
+    <!--            <if test="beginSendTime != null and endSendTime != null"> and send_time between #{beginSendTime} and #{endSendTime}</if>-->
+    <!--        </where>-->
+    <!--    </select> \-->
+    <select id="selectCctMeMessageList" parameterType="CctMeMessage" resultMap="CctMeMessageResult">
+        SELECT
+          *
+        FROM
+          (
+        SELECT
+          1 source,
+          id,
+          user_id,
+          title,
+          content,
+          isread,
+          send_time
+        FROM
+          cct_me_message
+        WHERE
+          user_id = #{userId} UNION
+        SELECT
+          2 source,
+          notice.notice_id id,
+          unotice.u_id user_id,
+          notice.notice_title title,
+          notice.notice_content content,
+          unotice.isread,
+          notice.create_time send_time
+        FROM
+          sys_notice notice
+          LEFT JOIN cct_user_notice unotice ON unotice.notice_id = notice.notice_id
+        WHERE
+          unotice.u_id = #{userId}
+          ) b
+        ORDER BY
+          b.send_time DESC
+    </select>
+
+    <select id="selectCctMeMessageById" parameterType="Long" resultMap="CctMeMessageResult">
+        <include refid="selectCctMeMessageVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertCctMeMessage" parameterType="CctMeMessage" useGeneratedKeys="true" keyProperty="id">
+        insert into cct_me_message
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="userId != null ">user_id,</if>
+            <if test="title != null  and title != ''">title,</if>
+            <if test="content != null  and content != ''">content,</if>
+            <if test="sendTime != null ">send_time,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="userId != null ">#{userId},</if>
+            <if test="title != null  and title != ''">#{title},</if>
+            <if test="content != null  and content != ''">#{content},</if>
+            <if test="sendTime != null ">#{sendTime},</if>
+        </trim>
+    </insert>
+
+    <update id="updateCctMeMessage" parameterType="CctMeMessage">
+        update cct_me_message
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="title != null  and title != ''">title = #{title},</if>
+            <if test="content != null  and content != ''">content = #{content},</if>
+            <if test="isread != null and isread != ''">isread = #{isread},</if>
+            <if test="sendTime != null ">send_time = #{sendTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteCctMeMessageById" parameterType="Long">
+        delete from cct_me_message where id = #{id}
+    </delete>
+
+    <delete id="deleteCctMeMessageUserId" parameterType="Long">
+        delete from cct_me_message where user_id = #{userId}
+    </delete>
+
+    <delete id="deleteCctMeMessageByIds" parameterType="String">
+        delete from cct_me_message where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>

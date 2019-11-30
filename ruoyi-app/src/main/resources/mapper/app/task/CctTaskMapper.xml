@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.app.mapper.task.CctTaskMapper">
+    
+    <resultMap type="CctTask" id="CctTaskResult">
+        <result property="tId"    column="t_id"    />
+        <result property="vId"    column="v_id"    />
+        <result property="type"    column="type"    />
+        <result property="paymentType"    column="payment_type"    />
+        <result property="title"    column="title"    />
+        <result property="money"    column="money"    />
+        <result property="personNum"    column="person_num"    />
+        <result property="pubdate"    column="pubdate"    />
+        <result property="finishdate"    column="finishdate"    />
+        <result property="image"    column="image"    />
+        <result property="description"    column="description"    />
+        <result property="pageView"    column="page_view"    />
+        <result property="isyet"    column="isyet"    />
+        <result property="ishandwork"    column="ishandwork"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectCctTaskVo">
+        select t_id, v_id, type, payment_type, title, money, person_num, pubdate, finishdate, image, description, page_view, isyet, ishandwork, create_time, update_time from cct_task
+    </sql>
+
+    <select id="selectCctTaskList" parameterType="CctTask" resultMap="CctTaskResult">
+        <include refid="selectCctTaskVo"/>
+        <where>  
+            <if test="vId != null "> and v_id = #{vId}</if>
+            <if test="type != null "> and type = #{type}</if>
+            <if test="paymentType != null "> and payment_type = #{paymentType}</if>
+            <if test="title != null  and title != ''"> and title = #{title}</if>
+            <if test="money != null "> and money = #{money}</if>
+            <if test="personNum != null "> and person_num = #{personNum}</if>
+            <if test="pubdate != null "> and pubdate = #{pubdate}</if>
+            <if test="finishdate != null "> and finishdate = #{finishdate}</if>
+            <if test="image != null  and image != ''"> and image = #{image}</if>
+            <if test="description != null  and description != ''"> and description = #{description}</if>
+            <if test="pageView != null "> and page_view = #{pageView}</if>
+            <if test="isyet != null "> and isyet = #{isyet}</if>
+            <if test="ishandwork != null "> and ishandwork = #{ishandwork}</if>
+        </where>
+        order by create_time desc
+    </select>
+    
+    <select id="selectCctTaskById" parameterType="String" resultMap="CctTaskResult">
+        <include refid="selectCctTaskVo"/>
+        where t_id = #{tId}
+    </select>
+        
+    <insert id="insertCctTask" parameterType="CctTask" useGeneratedKeys="true" keyProperty="tId">
+        insert into cct_task
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="vId != null ">v_id,</if>
+            <if test="type != null ">type,</if>
+            <if test="paymentType != null ">payment_type,</if>
+            <if test="title != null  and title != ''">title,</if>
+            <if test="money != null ">money,</if>
+            <if test="personNum != null ">person_num,</if>
+            <if test="pubdate != null ">pubdate,</if>
+            <if test="finishdate != null ">finishdate,</if>
+            <if test="image != null  and image != ''">image,</if>
+            <if test="description != null  and description != ''">description,</if>
+            <if test="pageView != null ">page_view,</if>
+            <if test="isyet != null ">isyet,</if>
+            <if test="ishandwork != null ">ishandwork,</if>
+            <if test="createTime != null ">create_time,</if>
+            <if test="updateTime != null ">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="vId != null ">#{vId},</if>
+            <if test="type != null ">#{type},</if>
+            <if test="paymentType != null ">#{paymentType},</if>
+            <if test="title != null  and title != ''">#{title},</if>
+            <if test="money != null ">#{money},</if>
+            <if test="personNum != null ">#{personNum},</if>
+            <if test="pubdate != null ">#{pubdate},</if>
+            <if test="finishdate != null ">#{finishdate},</if>
+            <if test="image != null  and image != ''">#{image},</if>
+            <if test="description != null  and description != ''">#{description},</if>
+            <if test="pageView != null ">#{pageView},</if>
+            <if test="isyet != null ">#{isyet},</if>
+            <if test="ishandwork != null ">#{ishandwork},</if>
+            <if test="createTime != null ">#{createTime},</if>
+            <if test="updateTime != null ">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateCctTask" parameterType="CctTask">
+        update cct_task
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="vId != null ">v_id = #{vId},</if>
+            <if test="type != null ">type = #{type},</if>
+            <if test="paymentType != null ">payment_type = #{paymentType},</if>
+            <if test="title != null  and title != ''">title = #{title},</if>
+            <if test="money != null ">money = #{money},</if>
+            <if test="personNum != null ">person_num = #{personNum},</if>
+            <if test="pubdate != null ">pubdate = #{pubdate},</if>
+            <if test="finishdate != null ">finishdate = #{finishdate},</if>
+            <if test="image != null  and image != ''">image = #{image},</if>
+            <if test="description != null  and description != ''">description = #{description},</if>
+            <if test="pageView != null ">page_view = #{pageView},</if>
+            <if test="isyet != null ">isyet = #{isyet},</if>
+            <if test="ishandwork != null ">ishandwork = #{ishandwork},</if>
+            <if test="createTime != null ">create_time = #{createTime},</if>
+            <if test="updateTime != null ">update_time = #{updateTime},</if>
+        </trim>
+        where t_id = #{tId}
+    </update>
+
+    <delete id="deleteCctTaskById" parameterType="Long">
+        delete from cct_task where t_id = #{tId}
+    </delete>
+
+    <delete id="deleteCctTaskByIds" parameterType="String">
+        delete from cct_task where t_id in 
+        <foreach item="tId" collection="array" open="(" separator="," close=")">
+            #{tId}
+        </foreach>
+    </delete>
+    
+</mapper>

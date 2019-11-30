@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <th:block th:include="include :: header('村庄列表')"/>
+</head>
+<body class="gray-bg">
+<div class="container-div">
+    <div class="row">
+        <div class="col-sm-12 search-collapse">
+            <form id="formId">
+                <div class="select-list">
+                    <ul>
+                        <li>
+                            <p>村庄名称：</p>
+                            <input type="text" name="vName"/>
+                        </li>
+                        <li>
+                            <a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search()"><i
+                                    class="fa fa-search"></i>&nbsp;搜索</a>
+                            <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i
+                                    class="fa fa-refresh"></i>&nbsp;重置</a>
+                        </li>
+                    </ul>
+                </div>
+            </form>
+        </div>
+
+        <!--        <div class="btn-group-sm" id="toolbar" role="group">-->
+        <!--            <a class="btn btn-success" onclick="$.operate.add()" shiro:hasPermission="system:village:add">-->
+        <!--                <i class="fa fa-plus"></i> 添加-->
+        <!--            </a>-->
+        <!--            <a class="btn btn-primary single disabled" onclick="$.operate.edit()"-->
+        <!--               shiro:hasPermission="system:village:edit">-->
+        <!--                <i class="fa fa-edit"></i> 修改-->
+        <!--            </a>-->
+        <!--            <a class="btn btn-danger multiple disabled" onclick="$.operate.removeAll()"-->
+        <!--               shiro:hasPermission="system:village:remove">-->
+        <!--                <i class="fa fa-remove"></i> 删除-->
+        <!--            </a>-->
+        <!--            <a class="btn btn-warning" onclick="$.table.exportExcel()" shiro:hasPermission="system:village:export">-->
+        <!--                <i class="fa fa-download"></i> 导出-->
+        <!--            </a>-->
+        <!--        </div>-->
+        <div class="col-sm-12 select-table table-striped">
+            <table id="bootstrap-table"></table>
+        </div>
+    </div>
+</div>
+<th:block th:include="include :: footer"/>
+<script th:inline="javascript">
+    // var editFlag = [[${@permission.hasPermi('system:village:edit')}]];
+    var removeFlag = [[${@permission.hasPermi('system:village:remove')}]];
+    var prefix = ctx + "village/village";
+
+    $(function () {
+        var options = {
+            url: prefix + "/list",
+            createUrl: prefix + "/add",
+            updateUrl: prefix + "/edit/{id}",
+            removeUrl: prefix + "/remove",
+            exportUrl: prefix + "/export",
+            modalName: "村庄",
+            columns: [{
+                checkbox: true
+            },
+                {
+                    field: 'vid',
+                    title: '村庄id',
+                    visible: true
+                },
+                {
+                    field: 'vname',
+                    title: '村庄名称'
+                },
+                {
+                    field: 'recommend',
+                    title: '状态',
+                    formatter: function (value, row, index) {
+                        if (value) {
+                            return "<span class='badge badge-warning'>已推荐</span>";
+                        } else {
+                            return "<span class='badge btn-success  '>未推荐</span>";
+                        }
+
+                    },
+                    sortable: true
+                },
+                {
+                    title: '操作',
+                    align: 'center',
+                    formatter: function (value, row, index) {
+                        const recommend = ' <span  class=\"btn btn-success btn-xs\" onclick="enable(\'' + row.vid + '\')">推荐</span>';
+                        const cancelRecommend = ' <span  class=\"btn btn-danger btn-xs\" onclick="disable(\'' + row.vid + '\')">取消</span>';
+
+                        if(row.recommend){
+                            return cancelRecommend;
+                        }else if(!row.recommend) {
+                            return recommend;
+                        }
+                    }
+                }]
+        };
+        $.table.init(options);
+    });
+
+
+    /* 通过 */
+    function enable(vid) {
+        $.modal.confirm("确认推荐申请吗？", function () {
+            console.log(vid);
+            $.operate.post(prefix + "/updateRecommend", {"vId": parseInt(vid)});
+        })
+    }
+
+    /* 不通过 */
+    function disable(vid) {
+        $.modal.confirm("确认不推荐申请吗？", function () {
+            $.operate.post(prefix + "/updateRecommend", {"vId": vid});
+            // $.operate.post(prefix + "/changeStatus", {"id": id, "applyAudit": 0});
+        })
+    }
+</script>
+</body>
+</html>

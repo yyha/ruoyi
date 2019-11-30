@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.app.mapper.wallet.CctMoneyIncomeMapper">
+    
+    <resultMap type="CctMoneyIncome" id="CctMoneyIncomeResult">
+        <result property="id"    column="id"    />
+        <result property="uId"    column="u_id"    />
+        <result property="tId"    column="t_id"    />
+        <result property="incomeMoney"    column="income_money"    />
+        <result property="createTime"    column="create_time"    />
+    </resultMap>
+
+    <sql id="selectCctMoneyIncomeVo">
+        select id, u_id, t_id, income_money, create_time from cct_money_income
+    </sql>
+
+    <select id="selectCctMoneyIncomeList" parameterType="CctMoneyIncome" resultMap="CctMoneyIncomeResult">
+        <include refid="selectCctMoneyIncomeVo"/>
+        <where>  
+            <if test="uId != null "> and u_id = #{uId}</if>
+            <if test="tId != null "> and t_id = #{tId}</if>
+            <if test="incomeMoney != null "> and income_money = #{incomeMoney}</if>
+        </where>
+    </select>
+    
+    <select id="selectCctMoneyIncomeById" parameterType="Integer" resultMap="CctMoneyIncomeResult">
+        <include refid="selectCctMoneyIncomeVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertCctMoneyIncome" parameterType="CctMoneyIncome" useGeneratedKeys="true" keyProperty="id">
+        insert into cct_money_income
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="uId != null ">u_id,</if>
+            <if test="tId != null ">t_id,</if>
+            <if test="incomeMoney != null ">income_money,</if>
+            <if test="createTime == null ">create_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="uId != null ">#{uId},</if>
+            <if test="tId != null ">#{tId},</if>
+            <if test="incomeMoney != null ">#{incomeMoney},</if>
+            <if test="createTime == null ">sysdate(),</if>
+         </trim>
+    </insert>
+
+    <update id="updateCctMoneyIncome" parameterType="CctMoneyIncome">
+        update cct_money_income
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="uId != null ">u_id = #{uId},</if>
+            <if test="tId != null ">t_id = #{tId},</if>
+            <if test="incomeMoney != null ">income_money = #{incomeMoney},</if>
+            <if test="createTime != null ">create_time = #{createTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteCctMoneyIncomeById" parameterType="Integer">
+        delete from cct_money_income where id = #{id}
+    </delete>
+
+    <delete id="deleteCctMoneyIncomeByIds" parameterType="String">
+        delete from cct_money_income where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    
+</mapper>

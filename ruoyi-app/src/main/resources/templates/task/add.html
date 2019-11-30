@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:include="include :: header('新增任务')"/>
+    <th:block th:include="include :: datetimepicker-css"/>
+    <th:block th:include="include :: bootstrap-fileinput-css"/>
+</head>
+<body class="white-bg">
+<div class="wrapper wrapper-content animated fadeInRight ibox-content">
+    <form class="form-horizontal m" id="form-task-add">
+        <div class="form-group">
+            <label class="col-sm-3 control-label">任务类型</label>
+            <div class="col-sm-8">
+                <select name="type" class="form-control m-b">
+                    <option value="0">打扫任务</option>
+                    <option value="1">植树任务</option>
+                    <option value="2">纺织任务</option>
+                </select>
+<!--                <span class="help-block m-b-none"><i class="fa fa-info-circle"></i> 代码生成请选择字典属性</span>-->
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">工资计算方式</label>
+            <div class="col-sm-8">
+                <select name="paymentType" class="form-control m-b">
+                    <option value="1">一口价</option>
+                    <option value="2">时结</option>
+                    <option value="3">日结</option>
+                    <option value="4">计件</option>
+                </select>
+<!--                <span class="help-block m-b-none"><i class="fa fa-info-circle"></i> 代码生成请选择字典属性</span>-->
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">任务标题：</label>
+            <div class="col-sm-8">
+                <input name="title" class="form-control" type="text" required>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">任务金额：</label>
+            <div class="col-sm-8">
+                <input name="money" class="form-control" type="text">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">所需人数：</label>
+            <div class="col-sm-8">
+                <input name="personNum" class="form-control" type="text">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">任务到期时间：</label>
+            <div class="col-sm-8">
+                <div class="input-group date">
+                    <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                    <input name="finishdate" class="form-control" placeholder="yyyy-MM-dd" type="text">
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">图片地址：</label>
+            <div class="col-sm-8">
+                <input name="image" class="form-control" type="text" style="display: none">
+                <input id="input-b5" name="images" type="file" multiple>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">详细说明：</label>
+            <div class="col-sm-8">
+                <input name="description" class="form-control" type="text">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">是否手工(0不是,1是)</label>
+            <div class="col-sm-8">
+                <input name="ishandwork" class="form-control" type="text">
+            </div>
+        </div>
+    </form>
+</div>
+<th:block th:include="include :: footer"/>
+<th:block th:include="include :: datetimepicker-js"/>
+<th:block th:include="include :: bootstrap-fileinput-js"/>
+<script type="text/javascript">
+    var img = [];
+    $(document).ready(function () {
+        console.log($('#form-task-add').serialize())
+        $("#input-b5").fileinput({
+            showUpload: false,
+            language: 'zh',
+            uploadAsync: true,
+            dropZoneEnabled: true,
+            uploadUrl: '/common/apk_upload',
+            maxFileCount: 3,
+            // maxImageWidth: 600,
+            resizeImage: false,
+            showCaption: false,
+            showPreview: true,
+            allowedFileTypes: ['image'],
+            browseClass: "btn btn-primary btn-lg",
+        }).on("filebatchselected", function (event, files) {
+            $(this).fileinput("upload");
+        })
+            .on("fileuploaded", function (event, data) {
+                if (data.response) {
+                    img[img.length] = data.response.url;
+                    $("input[name=image]").val(img.toString());
+                }
+            });
+    });
+
+
+    var prefix = ctx + "task"
+    $("#form-task-add").validate({
+        focusCleanup: true
+    });
+
+    function submitHandler() {
+        if ($.validate.form()) {
+            $.operate.save(prefix + "/add", $('#form-task-add').serialize());
+        }
+    }
+
+    $("input[name='pubdate']").datetimepicker({
+        format: "yyyy-mm-dd",
+        minView: "month",
+        autoclose: true
+    });
+
+    $("input[name='finishdate']").datetimepicker({
+        format: "yyyy-mm-dd",
+        minView: "month",
+        autoclose: true
+    });
+</script>
+</body>
+</html>

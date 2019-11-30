@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.app.mapper.user.CctUserAuthMapper">
+    
+    <resultMap type="CctUserAuth" id="CctUserAuthResult">
+        <result property="id"    column="id"    />
+        <result property="uId"    column="u_id"    />
+        <result property="vId"    column="v_id"    />
+        <result property="realName"    column="real_name"    />
+        <result property="cardId"    column="card_id"    />
+        <result property="cardFront"    column="card_front"    />
+        <result property="cardRear"    column="card_rear"    />
+        <result property="cardHand"    column="card_hand"    />
+        <result property="createTime"    column="create_time"    />
+    </resultMap>
+
+    <sql id="selectCctUserAuthVo">
+        select id, u_id, v_id, real_name, card_id, card_front, card_rear, card_hand, create_time from cct_user_auth
+    </sql>
+
+    <select id="selectCctUserAuthList" parameterType="CctUserAuth" resultMap="CctUserAuthResult">
+        <include refid="selectCctUserAuthVo"/>
+        <where>  
+            <if test="uId != null "> and u_id = #{uId}</if>
+            <if test="vId != null "> and v_id = #{vId}</if>
+            <if test="realName != null  and realName != ''"> and real_name like concat('%', #{realName}, '%')</if>
+            <if test="cardId != null "> and card_id = #{cardId}</if>
+            <if test="cardFront != null  and cardFront != ''"> and card_front = #{cardFront}</if>
+            <if test="cardRear != null  and cardRear != ''"> and card_rear = #{cardRear}</if>
+            <if test="cardHand != null  and cardHand != ''"> and card_hand = #{cardHand}</if>
+        </where>
+    </select>
+    
+    <select id="selectCctUserAuthById" parameterType="Long" resultMap="CctUserAuthResult">
+        <include refid="selectCctUserAuthVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertCctUserAuth" parameterType="CctUserAuth" useGeneratedKeys="true" keyProperty="id">
+        insert into cct_user_auth
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="uId != null ">u_id,</if>
+            <if test="vId != null ">v_id,</if>
+            <if test="realName != null  and realName != ''">real_name,</if>
+            <if test="cardId != null ">card_id,</if>
+            <if test="cardFront != null  and cardFront != ''">card_front,</if>
+            <if test="cardRear != null  and cardRear != ''">card_rear,</if>
+            <if test="cardHand != null  and cardHand != ''">card_hand,</if>
+            <if test="createTime != null ">create_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="uId != null ">#{uId},</if>
+            <if test="vId != null ">#{vId},</if>
+            <if test="realName != null  and realName != ''">#{realName},</if>
+            <if test="cardId != null ">#{cardId},</if>
+            <if test="cardFront != null  and cardFront != ''">#{cardFront},</if>
+            <if test="cardRear != null  and cardRear != ''">#{cardRear},</if>
+            <if test="cardHand != null  and cardHand != ''">#{cardHand},</if>
+            <if test="createTime != null ">#{createTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateCctUserAuth" parameterType="CctUserAuth">
+        update cct_user_auth
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="uId != null ">u_id = #{uId},</if>
+            <if test="vId != null ">v_id = #{vId},</if>
+            <if test="realName != null  and realName != ''">real_name = #{realName},</if>
+            <if test="cardId != null ">card_id = #{cardId},</if>
+            <if test="cardFront != null  and cardFront != ''">card_front = #{cardFront},</if>
+            <if test="cardRear != null  and cardRear != ''">card_rear = #{cardRear},</if>
+            <if test="cardHand != null  and cardHand != ''">card_hand = #{cardHand},</if>
+            <if test="createTime != null ">create_time = #{createTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteCctUserAuthById" parameterType="Long">
+        delete from cct_user_auth where id = #{id}
+    </delete>
+
+    <delete id="deleteCctUserAuthByIds" parameterType="String">
+        delete from cct_user_auth where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    
+</mapper>

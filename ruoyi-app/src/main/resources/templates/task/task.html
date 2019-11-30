@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <th:block th:include="include :: header('任务列表')"/>
+</head>
+<body class="gray-bg">
+<div class="container-div">
+    <div class="row">
+        <div class="col-sm-12 search-collapse">
+            <form id="formId">
+                <div class="select-list">
+                    <ul>
+                        <li>
+                            <p>村庄id：</p>
+                            <input type="text" name="vId"/>
+                        </li>
+                        <li>
+                            <p>任务类型</p>
+                            <select name="type" th:with="type=${@dict.getType('sys_task_type')}">
+                                <option value="">所有</option>
+                                <option th:each="dict : ${type}" th:text="${dict.dictLabel}"
+                                        th:value="${dict.dictValue}"></option>
+                            </select>
+                        </li>
+
+                        <li>
+                            <p>结算方式</p>
+                            <select name="paymentType" th:with="type=${@dict.getType('sys_task_money')}">
+                                <option value="">所有</option>
+                                <option th:each="dict : ${type}" th:text="${dict.dictLabel}"
+                                        th:value="${dict.dictValue}"></option>
+                            </select>
+                        </li>
+                        <li>
+                            <p>任务标题：</p>
+                            <input type="text" name="title"/>
+                        </li>
+                        <li>
+                            <a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search()"><i
+                                    class="fa fa-search"></i>&nbsp;搜索</a>
+                            <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i
+                                    class="fa fa-refresh"></i>&nbsp;重置</a>
+                        </li>
+                    </ul>
+                </div>
+            </form>
+        </div>
+
+        <div class="btn-group-sm" id="toolbar" role="group">
+            <a class="btn btn-success" onclick="$.operate.add()" shiro:hasPermission="system:task:add">
+                <i class="fa fa-plus"></i> 添加
+            </a>
+            <a class="btn btn-primary single disabled" onclick="$.operate.edit()"
+               shiro:hasPermission="system:task:edit">
+                <i class="fa fa-edit"></i> 修改
+            </a>
+            <a class="btn btn-danger multiple disabled" onclick="$.operate.removeAll()"
+               shiro:hasPermission="system:task:remove">
+                <i class="fa fa-remove"></i> 删除
+            </a>
+            <a class="btn btn-warning" onclick="$.table.exportExcel()" shiro:hasPermission="system:task:export">
+                <i class="fa fa-download"></i> 导出
+            </a>
+        </div>
+        <div class="col-sm-12 select-table table-striped">
+            <table id="bootstrap-table"></table>
+        </div>
+    </div>
+</div>
+
+<th:block th:include="include :: footer"/>
+<script th:inline="javascript">
+    var editFlag = [[${@permission.hasPermi('system:task:edit')}]];
+    var removeFlag = [[${@permission.hasPermi('system:task:remove')}]];
+    var getFlag = [[${@permission.hasPermi('system:task:get')}]];
+    var prefix = ctx + "task";
+
+    $(function () {
+        var options = {
+            url: prefix + "/list",
+            createUrl: prefix + "/add",
+            updateUrl: prefix + "/edit/{id}",
+            removeUrl: prefix + "/remove",
+            exportUrl: prefix + "/export",
+            modalName: "任务",
+            columns: [{
+                checkbox: true
+            },
+                {
+                    field: 'vid',
+                    title: 'id',
+                    visible: false
+                },
+                {
+                    field: 'vid',
+                    title: '村庄id'
+                },
+                {
+                    field: 'type',
+                    title: '任务类型',
+                    formatter: function (value, row, index) {
+                        if (value == 0) {
+                            return "打扫任务";
+                        } else if (value == 1) {
+                            return "植树任务";
+                        } else {
+                            return "纺织任务";
+                        }
+                    }
+                },
+                {
+                    field: 'paymentType',
+                    title: '工资计算方式',
+                    formatter: function (value, row, index) {
+                        if (value == 1) {
+                            return "一口价";
+                        } else if (value == 2) {
+                            return "时结";
+                        } else if (value == 3) {
+                            return "日结";
+                        } else {
+                            return "计件";
+                        }
+                    }
+                },
+                {
+                    field: 'title',
+                    title: '任务标题'
+                },
+                {
+                    field: 'money',
+                    title: '任务金额',
+                    sortable: true
+                },
+                {
+                    field: 'personNum',
+                    title: '所需人数',
+                    formatter: function (value,row) {
+                        return row.joinNum+"/"+value;
+                    }
+                },
+                {
+                    field: 'pubdate',
+                    title: '发布时间',
+                    sortable: true
+                },
+                {
+                    field: 'finishdate',
+                    title: '任务到期时间'
+                },
+                {
+                    field: 'image',
+                    title: '图片地址',
+                    formatter: function (value) {
+                        return "<img style='width: 30px;height: 30px' src=\"" + value + "\">";
+                    }
+                },
+                {
+                    field: 'description',
+                    title: '详细说明'
+                },
+                {
+                    field: 'pageView',
+                    title: '浏览量'
+                },
+                {
+                    field: 'isyet',
+                    title: '是否已满',
+                    formatter: function (value) {
+                        return value == 0 ? "未满" : "已满"
+                    }
+                },
+                {
+                    field: 'ishandwork',
+                    title: '是否手工',
+                    formatter: function (value) {
+                        return value == 0 ? "否" : "是"
+                    }
+                },
+                {
+                    title: '操作',
+                    align: 'center',
+                    formatter: function (value, row, index) {
+                        var actions = [];
+                        actions.push('<a class="btn btn-success btn-xs ' + editFlag + '" href="javascript:void(0)" onclick="$.operate.edit(\'' + row.tid + '\')"><i class="fa fa-edit"></i>编辑</a> ');
+                        actions.push('<a class="btn btn-success btn-xs ' + getFlag + '" href="javascript:void(0)" onclick="getTask(' + row.tid + ')"><i class="fa fa-edit"></i>领取</a> ');
+                        actions.push('<a class="btn btn-danger btn-xs ' + removeFlag + '" href="javascript:void(0)" onclick="$.operate.remove(\'' + row.tid + '\')"><i class="fa fa-remove"></i>删除</a>');
+                        return actions.join('');
+                    }
+                }]
+        };
+        $.table.init(options);
+    });
+
+    function getTask(tid) {
+        $.ajax({
+            type: "POST",
+            url:  "user/mytask/add",
+            data: {
+                taskId: tid
+            },
+            dataType: 'json',
+            success: function (result) {
+                if (result.code == 500){
+                    $.modal.msgWarning(result.msg);
+                }else {
+                    $.modal.msgSuccess(result.msg);
+                }
+            },
+            error: function (error) {
+                $.modal.alertError(error.msg);
+            }
+        });
+    }
+</script>
+</body>
+</html>

@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.app.mapper.task.CctUserScoreMapper">
+
+    <resultMap type="CctUserScore" id="CctUserScoreResult">
+        <result property="id" column="id"/>
+        <result property="uId" column="u_id"/>
+        <result property="score" column="score"/>
+        <result property="loginName" column="login_name"/>
+        <result property="userName" column="user_name"/>
+        <result property="phonenumber" column="phonenumber"/>
+    </resultMap>
+
+    <sql id="selectCctUserScoreVo">
+        select id, u_id, score,login_name,user_name,phonenumber from cct_user_score
+        left join sys_user on sys_user.user_id= cct_user_score.u_id
+    </sql>
+
+    <select id="selectCctUserScoreList" parameterType="CctUserScore" resultMap="CctUserScoreResult">
+        <include refid="selectCctUserScoreVo"/>
+        <where>
+            <if test="uId != null ">and u_id = #{uId}</if>
+            <if test="score != null ">and score = #{score}</if>
+            <if test="loginName != null and loginName != '' ">and login_name like concat('%',#{loginName},'%')</if>
+            <if test="userName != null and userName != '' ">and user_name like concat('%',#{userName},'%')</if>
+            <if test="phonenumber != null and phonenumber != '' ">and phonenumber like concat('%',#{phonenumber},'%')
+            </if>
+        </where>
+    </select>
+
+    <select id="selectCctUserScoreById" parameterType="Long" resultMap="CctUserScoreResult">
+        <include refid="selectCctUserScoreVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertCctUserScore" parameterType="CctUserScore" useGeneratedKeys="true" keyProperty="id">
+        insert into cct_user_score
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="uId != null ">u_id,</if>
+            <if test="score != null ">score,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="uId != null ">#{uId},</if>
+            <if test="score != null ">#{score},</if>
+        </trim>
+    </insert>
+
+    <update id="updateCctUserScore" parameterType="CctUserScore">
+        update cct_user_score
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="score != null ">score = #{score},</if>
+        </trim>
+        where u_id = #{uId}
+    </update>
+
+    <delete id="deleteCctUserScoreById" parameterType="Long">
+        delete from cct_user_score where id = #{id}
+    </delete>
+
+    <delete id="deleteCctUserScoreByIds" parameterType="String">
+        delete from cct_user_score where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>

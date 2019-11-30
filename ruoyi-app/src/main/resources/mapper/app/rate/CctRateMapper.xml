@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.app.mapper.rate.CctRateMapper">
+    
+    <resultMap type="CctRate" id="CctRateResult">
+        <result property="rId"    column="r_id"    />
+        <result property="rate"    column="rate"    />
+    </resultMap>
+
+    <sql id="selectCctRateVo">
+        select r_id, rate from cct_rate
+    </sql>
+
+    <select id="selectCctRateList" parameterType="CctRate" resultMap="CctRateResult">
+        <include refid="selectCctRateVo"/>
+        <where>  
+            <if test="rate != null "> and rate = #{rate}</if>
+        </where>
+    </select>
+    
+    <select id="selectCctRateById" parameterType="Integer" resultMap="CctRateResult">
+        <include refid="selectCctRateVo"/>
+        where r_id = #{rId}
+    </select>
+        
+    <insert id="insertCctRate" parameterType="CctRate" useGeneratedKeys="true" keyProperty="rId">
+        insert into cct_rate
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="rate != null ">rate,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="rate != null ">#{rate},</if>
+         </trim>
+    </insert>
+
+    <update id="updateCctRate" parameterType="CctRate">
+        update cct_rate
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="rate != null ">rate = #{rate},</if>
+        </trim>
+        where r_id = #{rId}
+    </update>
+
+    <delete id="deleteCctRateById" parameterType="Integer">
+        delete from cct_rate where r_id = #{rId}
+    </delete>
+
+    <delete id="deleteCctRateByIds" parameterType="String">
+        delete from cct_rate where r_id in 
+        <foreach item="rId" collection="array" open="(" separator="," close=")">
+            #{rId}
+        </foreach>
+    </delete>
+    
+</mapper>

@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <th:block th:include="include :: header('修改用户实名认证')" />
+</head>
+<body class="white-bg">
+    <div class="wrapper wrapper-content animated fadeInRight ibox-content">
+        <form class="form-horizontal m" id="form-auth-edit" th:object="${cctUserAuth}">
+            <input name="id" th:field="*{id}" type="hidden">
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">用户表id：</label>
+                <div class="col-sm-8">
+                    <input name="uId" th:field="*{uId}" class="form-control" type="text" required>
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">村庄id：</label>
+                <div class="col-sm-8">
+                    <input name="vId" th:field="*{vId}" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">真实姓名：</label>
+                <div class="col-sm-8">
+                    <input name="realName" th:field="*{realName}" class="form-control" type="text" required>
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">身份证编号：</label>
+                <div class="col-sm-8">
+                    <input name="cardId" th:field="*{cardId}" class="form-control" type="text" required>
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">身份证正面：</label>
+                <div class="col-sm-8">
+                    <input name="cardFront" th:field="*{cardFront}" class="form-control" type="text" required>
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">反面：</label>
+                <div class="col-sm-8">
+                    <input name="cardRear" th:field="*{cardRear}" class="form-control" type="text" required>
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">手持：</label>
+                <div class="col-sm-8">
+                    <input name="cardHand" th:field="*{cardHand}" class="form-control" type="text" required>
+                </div>
+            </div>
+        </form>
+    </div>
+    <th:block th:include="include :: footer" />
+    <script type="text/javascript">
+        var prefix = ctx + "system/auth";
+        $("#form-auth-edit").validate({
+            focusCleanup: true
+        });
+
+        function submitHandler() {
+            if ($.validate.form()) {
+                $.operate.save(prefix + "/edit", $('#form-auth-edit').serialize());
+            }
+        }
+    </script>
+</body>
+</html>

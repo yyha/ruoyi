@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.app.mapper.village.CctMaintainRecordMapper">
+    
+    <resultMap type="CctMaintainRecord" id="CctMaintainRecordResult">
+        <result property="id"    column="id"    />
+        <result property="mId"    column="m_id"    />
+        <result property="uId"    column="u_id"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectCctMaintainRecordVo">
+        select id, m_id, u_id, create_time, update_time from cct_maintain_record
+    </sql>
+
+    <select id="selectCctMaintainRecordList" parameterType="CctMaintainRecord" resultType="com.ruoyi.app.domain.village.CctVillageMaintain">
+        SELECT
+        maintain.id,maintain.description,maintain.address,maintain.contact_mobile contactMobile ,maintain.`status`,
+        sysuser.user_name applyName,sysuser2.user_name repairName,sysuser2.phonenumber repairPhone
+        FROM
+        cct_maintain_record record
+        LEFT JOIN cct_village_maintain maintain ON record.m_id = maintain.id
+        LEFT JOIN sys_user sysuser on maintain.u_id = sysuser.user_id
+        LEFT JOIN sys_user sysuser2 on record.u_id = sysuser2.user_id
+        <where>  
+            <if test="mId != null "> and record.m_id = #{mId}</if>
+            <if test="uId != null "> and record.u_id = #{uId}</if>
+        </where>
+    </select>
+    
+    <select id="selectCctMaintainRecordById" parameterType="Long" resultMap="CctMaintainRecordResult">
+        <include refid="selectCctMaintainRecordVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertCctMaintainRecord" parameterType="CctMaintainRecord" useGeneratedKeys="true" keyProperty="id">
+        insert into cct_maintain_record
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="mId != null ">m_id,</if>
+            <if test="uId != null ">u_id,</if>
+            <if test="createTime != null ">create_time,</if>
+            <if test="updateTime != null ">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="mId != null ">#{mId},</if>
+            <if test="uId != null ">#{uId},</if>
+            <if test="createTime != null ">#{createTime},</if>
+            <if test="updateTime != null ">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateCctMaintainRecord" parameterType="CctMaintainRecord">
+        update cct_maintain_record
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="mId != null ">m_id = #{mId},</if>
+            <if test="uId != null ">u_id = #{uId},</if>
+            <if test="createTime != null ">create_time = #{createTime},</if>
+            <if test="updateTime != null ">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteCctMaintainRecordById" parameterType="Long">
+        delete from cct_maintain_record where id = #{id}
+    </delete>
+
+    <delete id="deleteCctMaintainRecordByIds" parameterType="String">
+        delete from cct_maintain_record where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    
+</mapper>

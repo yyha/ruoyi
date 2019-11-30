@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.app.mapper.wallet.CctMoneyWithdrawalMapper">
+    
+    <resultMap type="CctMoneyWithdrawal" id="CctMoneyWithdrawalResult">
+        <result property="id"    column="id"    />
+        <result property="uId"    column="u_id"    />
+        <result property="tId"    column="t_id"    />
+        <result property="money"    column="money"    />
+        <result property="realityMoney"    column="reality_money"    />
+        <result property="status"    column="status"    />
+        <result property="rate"    column="rate"    />
+        <result property="manner"    column="account_type"    />
+        <result property="rejectCause"    column="reject_cause"    />
+        <result property="withdrawTime"    column="withdraw_time"    />
+        <result property="mannerAccount"    column="account"    />
+        <result property="name"    column="user_name"    />
+    </resultMap>
+
+    <sql id="selectCctMoneyWithdrawalVo">
+        select id, u_id, t_id, money, reality_money, status, rate, manner, reject_cause, withdraw_time, manner_account from cct_money_withdrawal
+    </sql>
+
+    <select id="selectCctMoneyWithdrawalList" parameterType="CctMoneyWithdrawal" resultMap="CctMoneyWithdrawalResult">
+        SELECT
+        s1.user_name,
+        s2.*,
+        s3.account,
+        s3.account_type
+        FROM
+        sys_user s1
+        INNER JOIN cct_money_withdrawal s2 ON s1.user_id = s2.u_id
+        LEFT JOIN cct_user_account s3 ON s2.u_id = s3.u_id
+        <where>
+            <if test="uId != null "> and s2.u_id = #{uId}</if>
+            <if test="tId != null "> and s2.t_id = #{tId}</if>
+            <if test="money != null "> and s2.money = #{money}</if>
+            <if test="realityMoney != null "> and s2.reality_money = #{realityMoney}</if>
+            <if test="status != null "> and s2.status = #{status}</if>
+            <if test="rate != null "> and s2.rate = #{rate}</if>
+            <if test="manner != null "> and s3.account_type = #{manner}</if>
+            <if test="rejectCause != null  and rejectCause != ''"> and s2.reject_cause = #{rejectCause}</if>
+            <if test="withdrawTime != null "> and s2.withdraw_time = #{Integer}</if>
+            <if test="mannerAccount != null  and mannerAccount != ''"> and s3.account = #{mannerAccount}</if>
+            <if test="name != null  and name != ''"> and s1.user_name like concat('%',#{name},'%')</if>
+            and s2.u_id = s3.u_id and  s2.manner=s3.account_type
+        </where>
+    </select>
+    
+    <select id="selectCctMoneyWithdrawalById" parameterType="Integer" resultMap="CctMoneyWithdrawalResult">
+        <include refid="selectCctMoneyWithdrawalVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertCctMoneyWithdrawal" parameterType="CctMoneyWithdrawal" useGeneratedKeys="true" keyProperty="id">
+        insert into cct_money_withdrawal
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="uId != null ">u_id,</if>
+            <if test="tId != null ">t_id,</if>
+            <if test="money != null ">money,</if>
+            <if test="realityMoney != null ">reality_money,</if>
+            <if test="status != null ">status,</if>
+            <if test="rate != null ">rate,</if>
+            <if test="manner != null ">manner,</if>
+            <if test="rejectCause != null  and rejectCause != ''">reject_cause,</if>
+            <if test="withdrawTime == null ">withdraw_time,</if>
+            <if test="mannerAccount != null  and mannerAccount != ''">manner_account,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="uId != null ">#{uId},</if>
+            <if test="tId != null ">#{tId},</if>
+            <if test="money != null ">#{money},</if>
+            <if test="realityMoney != null ">#{realityMoney},</if>
+            <if test="status != null ">#{status},</if>
+            <if test="rate != null ">#{rate},</if>
+            <if test="manner != null ">#{manner},</if>
+            <if test="rejectCause != null  and rejectCause != ''">#{rejectCause},</if>
+            <if test="withdrawTime == null ">NOW(),</if>
+            <if test="mannerAccount != null  and mannerAccount != ''">#{mannerAccount},</if>
+         </trim>
+    </insert>
+
+    <update id="updateCctMoneyWithdrawal" parameterType="CctMoneyWithdrawal">
+        update cct_money_withdrawal
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="uId != null ">u_id = #{uId},</if>
+            <if test="tId != null ">t_id = #{tId},</if>
+            <if test="money != null ">money = #{money},</if>
+            <if test="realityMoney != null ">reality_money = #{realityMoney},</if>
+            <if test="status != null ">status = #{status},</if>
+            <if test="rate != null ">rate = #{rate},</if>
+            <if test="manner != null ">manner = #{manner},</if>
+            <if test="rejectCause != null  and rejectCause != ''">reject_cause = #{rejectCause},</if>
+            <if test="withdrawTime != null ">withdraw_time = #{withdrawTime},</if>
+            <if test="mannerAccount != null  and mannerAccount != ''">manner_account = #{mannerAccount},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteCctMoneyWithdrawalById" parameterType="Integer">
+        delete from cct_money_withdrawal where id = #{id}
+    </delete>
+
+    <delete id="deleteCctMoneyWithdrawalByIds" parameterType="String">
+        delete from cct_money_withdrawal where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    
+</mapper>

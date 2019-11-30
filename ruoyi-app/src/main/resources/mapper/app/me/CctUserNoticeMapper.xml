@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.app.mapper.me.CctUserNoticeMapper">
+    
+    <resultMap type="CctUserNotice" id="CctUserNoticeResult">
+        <result property="id"    column="id"    />
+        <result property="uId"    column="u_id"    />
+        <result property="noticeId"    column="notice_id"    />
+        <result property="isread"    column="isread"    />
+    </resultMap>
+
+    <sql id="selectCctUserNoticeVo">
+        select id, u_id, notice_id, isread from cct_user_notice
+    </sql>
+
+    <select id="selectCctUserNoticeList" parameterType="CctUserNotice" resultMap="CctUserNoticeResult">
+        <include refid="selectCctUserNoticeVo"/>
+        <where>  
+            <if test="uId != null "> and u_id = #{uId}</if>
+            <if test="noticeId != null "> and notice_id = #{noticeId}</if>
+            <if test="isread != null  and isread != ''"> and isread = #{isread}</if>
+        </where>
+    </select>
+    
+    <select id="selectCctUserNoticeById" parameterType="Long" resultMap="CctUserNoticeResult">
+        <include refid="selectCctUserNoticeVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertCctUserNotice" parameterType="CctUserNotice" useGeneratedKeys="true" keyProperty="id">
+        insert into cct_user_notice
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="uId != null ">u_id,</if>
+            <if test="noticeId != null ">notice_id,</if>
+            <if test="isread != null  and isread != ''">isread,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="uId != null ">#{uId},</if>
+            <if test="noticeId != null ">#{noticeId},</if>
+            <if test="isread != null  and isread != ''">#{isread},</if>
+         </trim>
+    </insert>
+
+    <update id="updateCctUserNotice" parameterType="CctUserNotice">
+        update cct_user_notice
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="uId != null ">u_id = #{uId},</if>
+            <if test="noticeId != null ">notice_id = #{noticeId},</if>
+            <if test="isread != null  and isread != ''">isread = #{isread},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <update id="updateCctUserNoticeUserIdNoticeId" parameterType="CctUserNotice">
+        update cct_user_notice
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="isread != null  and isread != ''">isread = #{isread}</if>
+        </trim>
+        where u_id = #{uId} and notice_id = #{noticeId}
+    </update>
+
+    <delete id="deleteCctUserNoticeById" parameterType="Long">
+        delete from cct_user_notice where id = #{id}
+    </delete>
+
+    <delete id="deleteCctUserNoticeByIds" parameterType="String">
+        delete from cct_user_notice where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+
+    <delete id="deleteCctUserNoticeUserId" parameterType="Long">
+        delete from cct_user_notice where u_id = #{uId}
+    </delete>
+    
+</mapper>

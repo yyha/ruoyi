@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.app.mapper.wallet.CctUserAccountMapper">
+    
+    <resultMap type="CctUserAccount" id="CctUserAccountResult">
+        <result property="id"    column="id"    />
+        <result property="uId"    column="u_id"    />
+        <result property="accountType"    column="account_type"    />
+        <result property="account"    column="account"    />
+        <result property="createTime"    column="create_time"    />
+    </resultMap>
+
+    <sql id="selectCctUserAccountVo">
+        select id, u_id, account_type, account, create_time from cct_user_account
+    </sql>
+
+    <select id="selectCctUserAccountList" parameterType="CctUserAccount" resultMap="CctUserAccountResult">
+        <include refid="selectCctUserAccountVo"/>
+        <where>  
+            <if test="uId != null "> and u_id = #{uId}</if>
+            <if test="accountType != null "> and account_type = #{accountType}</if>
+            <if test="account != null  and account != ''"> and account = #{account}</if>
+        </where>
+    </select>
+    
+    <select id="selectCctUserAccountById" parameterType="Integer" resultMap="CctUserAccountResult">
+        <include refid="selectCctUserAccountVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertCctUserAccount" parameterType="CctUserAccount">
+        insert into cct_user_account
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null ">id,</if>
+            <if test="uId != null ">u_id,</if>
+            <if test="accountType != null ">account_type,</if>
+            <if test="account != null  and account != ''">account,</if>
+            <if test="createTime != null ">create_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null ">#{id},</if>
+            <if test="uId != null ">#{uId},</if>
+            <if test="accountType != null ">#{accountType},</if>
+            <if test="account != null  and account != ''">#{account},</if>
+            <if test="createTime != null ">#{createTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateCctUserAccount" parameterType="CctUserAccount">
+        update cct_user_account
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="uId != null ">u_id = #{uId},</if>
+            <if test="accountType != null ">account_type = #{accountType},</if>
+            <if test="account != null  and account != ''">account = #{account},</if>
+            <if test="createTime != null ">create_time = #{createTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteCctUserAccountById" parameterType="Integer">
+        delete from cct_user_account where id = #{id}
+    </delete>
+
+    <delete id="deleteCctUserAccountByIds" parameterType="String">
+        delete from cct_user_account where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    
+</mapper>

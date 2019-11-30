@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:include="include :: header('用户列表')"/>
+    <th:block th:include="include :: layout-latest-css"/>
+    <th:block th:include="include :: ztree-css"/>
+</head>
+<body class="gray-bg">
+
+<div class="ui-layout-center">
+    <div class="container-div">
+        <div class="row">
+
+            <div class="col-sm-12 select-table table-striped">
+                <table id="bootstrap-table"></table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<th:block th:include="include :: footer"/>
+<th:block th:include="include :: layout-latest-js"/>
+<th:block th:include="include :: ztree-js"/>
+<script th:inline="javascript">
+    var editFlag = [[${@permission.hasPermi('system:user:edit')}]];
+    var removeFlag = [[${@permission.hasPermi('system:user:remove')}]];
+    var prefix = ctx + "village/record";
+    var cctVillageMaintain = [[${cctVillageMaintain}]]
+    $(function () {
+        var panehHidden = false;
+        if ($(this).width() < 769) {
+            panehHidden = true;
+        }
+        $('body').layout({initClosed: panehHidden, west__size: 185});
+        $('#bootstrap-table')
+            .bootstrapTable({
+                method: 'post', // 服务器数据的请求方式 get or post
+                url: prefix + "/user", // 服务器数据的加载地址
+                striped: true, // 设置为true会有隔行变色效果
+                dataType: "json", // 服务器返回的数据类型
+                pagination: true, // 设置为true会在底部显示分页条
+                singleSelect: true, // 设置为true将禁止多选
+                pageSize: 10, // 如果设置了分页，每页数据条数
+                pageNumber: 1, // 如果设置了分布，首页页码
+                search: true, // 是否显示搜索框
+                showColumns: false, // 是否显示内容下拉框（选择显示的列）
+                sidePagination: "server", // 设置在哪里进行分页，可选值为"client" 或者 "server"
+                columns: [{
+                    checkbox: true
+                },
+                    {
+                        field: 'userId',
+                        title: '用户ID'
+                    },
+                    {
+                        field: 'loginName',
+                        title: '登录名称',
+                    },
+                    {
+                        field: 'userName',
+                        title: '用户名称'
+                    },
+                    {
+                        field: 'phonenumber',
+                        title: '手机'
+                    }]
+            });
+    });
+    function submitHandler() {
+        // 获取当前行
+        //使用getSelections即可获得，row是json格式的数据
+        var row = $.map($('#bootstrap-table').bootstrapTable('getSelections'),function (row) {
+            return row;
+        });
+        var obj={};
+        obj.mId = cctVillageMaintain.id;
+        obj.uId = row[0].userId;
+        $.operate.save(ctx + "village/record/add", obj);
+    }
+</script>
+</body>
+</html>

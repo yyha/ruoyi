@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.app.mapper.sys.CctVillageImageMapper">
+    
+    <resultMap type="CctVillageImage" id="CctVillageImageResult">
+        <result property="id"    column="id"    />
+        <result property="imageUrl"    column="image_url"    />
+    </resultMap>
+
+    <sql id="selectCctVillageImageVo">
+        select id, image_url from cct_village_image
+    </sql>
+
+    <select id="selectCctVillageImageList" parameterType="CctVillageImage" resultMap="CctVillageImageResult">
+        <include refid="selectCctVillageImageVo"/>
+        <where>  
+            <if test="imageUrl != null  and imageUrl != ''"> and image_url = #{imageUrl}</if>
+        </where>
+    </select>
+    
+    <select id="selectCctVillageImageById" parameterType="Long" resultMap="CctVillageImageResult">
+        <include refid="selectCctVillageImageVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertCctVillageImage" parameterType="CctVillageImage">
+        insert into cct_village_image
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null ">id,</if>
+            <if test="imageUrl != null  and imageUrl != ''">image_url,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null ">#{id},</if>
+            <if test="imageUrl != null  and imageUrl != ''">#{imageUrl},</if>
+         </trim>
+    </insert>
+
+    <update id="updateCctVillageImage" parameterType="CctVillageImage">
+        update cct_village_image
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="imageUrl != null  and imageUrl != ''">image_url = #{imageUrl},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteCctVillageImageById" parameterType="Long">
+        delete from cct_village_image where id = #{id}
+    </delete>
+
+    <delete id="deleteCctVillageImageByIds" parameterType="String">
+        delete from cct_village_image where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    <delete id="deleteCctVillageImagesAll">
+        truncate cct_village_image
+    </delete>
+
+</mapper>

@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.app.mapper.village.CctVillageMaintainMapper">
+    
+    <resultMap type="CctVillageMaintain" id="CctVillageMaintainResult">
+        <result property="id"    column="id"    />
+        <result property="uId"    column="u_id"    />
+        <result property="contactMobile"    column="contact_mobile"    />
+        <result property="address"    column="address"    />
+        <result property="description"    column="description"    />
+        <result property="status"    column="status"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectCctVillageMaintainVo">
+        select id, u_id, contact_mobile, address, description, status, create_time, update_time from cct_village_maintain
+    </sql>
+
+    <select id="selectCctVillageMaintainList" parameterType="CctVillageMaintain" resultMap="CctVillageMaintainResult">
+        <include refid="selectCctVillageMaintainVo"/>
+        <where>  
+            <if test="uId != null "> and u_id = #{uId}</if>
+            <if test="contactMobile != null  and contactMobile != ''"> and contact_mobile like concat( '%',#{contactMobile},'%')</if>
+            <if test="address != null  and address != ''"> and address like concat( '%',#{address},'%')</if>
+            <if test="description != null  and description != ''"> and description = #{description}</if>
+            <if test="status != null "> and status = #{status}</if>
+        </where>
+    </select>
+    
+    <select id="selectCctVillageMaintainById" parameterType="Long" resultMap="CctVillageMaintainResult">
+        <include refid="selectCctVillageMaintainVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertCctVillageMaintain" parameterType="CctVillageMaintain" useGeneratedKeys="true" keyProperty="id">
+        insert into cct_village_maintain
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="uId != null ">u_id,</if>
+            <if test="contactMobile != null  and contactMobile != ''">contact_mobile,</if>
+            <if test="address != null  and address != ''">address,</if>
+            <if test="description != null  and description != ''">description,</if>
+            <if test="status != null ">status,</if>
+            <if test="createTime != null ">create_time,</if>
+            <if test="updateTime != null ">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="uId != null ">#{uId},</if>
+            <if test="contactMobile != null  and contactMobile != ''">#{contactMobile},</if>
+            <if test="address != null  and address != ''">#{address},</if>
+            <if test="description != null  and description != ''">#{description},</if>
+            <if test="status != null ">#{status},</if>
+            <if test="createTime != null ">#{createTime},</if>
+            <if test="updateTime != null ">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateCctVillageMaintain" parameterType="CctVillageMaintain">
+        update cct_village_maintain
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="uId != null ">u_id = #{uId},</if>
+            <if test="contactMobile != null  and contactMobile != ''">contact_mobile = #{contactMobile},</if>
+            <if test="address != null  and address != ''">address = #{address},</if>
+            <if test="description != null  and description != ''">description = #{description},</if>
+            <if test="status != null ">status = #{status},</if>
+            <if test="createTime != null ">create_time = #{createTime},</if>
+            <if test="updateTime != null ">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteCctVillageMaintainById" parameterType="Long">
+        delete from cct_village_maintain where id = #{id}
+    </delete>
+
+    <delete id="deleteCctVillageMaintainByIds" parameterType="String">
+        delete from cct_village_maintain where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    
+</mapper>
