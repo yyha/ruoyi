@@ -53,6 +53,20 @@ public class CctUserMoneyController extends BaseController
     }
 
     /**
+     * 查询 我的余额
+     */
+    @RequiresPermissions("system:money:list")
+    @GetMapping("/userMoney/{id}")
+    @ResponseBody
+    public AjaxResult userMoney(@PathVariable("id") Integer id)
+    {
+        CctUserMoney cctUserMoney = cctUserMoneyService.selectCctUserMoneyUserId(id);
+        return AjaxResult.success(cctUserMoney);
+    }
+
+
+
+    /**
      * 导出【请填写功能名称】列表
      */
     @RequiresPermissions("system:money:export")

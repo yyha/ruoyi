@@ -88,6 +88,17 @@ public class CctMeMessageServiceImpl implements ICctMeMessageService
     }
 
     /**
+     * 查询未读数量
+     *
+     * @param userId 用户id
+     * @return 数量返回0 就表示没有未读消息,  大于0就有未读消息
+     */
+    @Override
+    public int selectNreadCount(Integer userId) {
+        return cctMeMessageMapper.selectNreadCount(userId);
+    }
+
+    /**
      * 新增
      * 
      * @param cctMeMessage

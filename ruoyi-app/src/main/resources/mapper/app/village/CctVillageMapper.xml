@@ -21,6 +21,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="vName != null  and vName != ''"> and v_name like concat('%', #{vName}, '%')</if>
         </where>
     </select>
+
+    <select id="correspondenceVillager" resultType="String">
+select s2.v_name from sys_user s1 inner join cct_village s2 on
+					s1.v_id=s2.v_id where s1.user_id=#{userId}
+    </select>
     
     <select id="selectCctVillageById" parameterType="Long" resultMap="CctVillageResult">
         <include refid="selectCctVillageVo"/>

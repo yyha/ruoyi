@@ -1,8 +1,11 @@
 package com.ruoyi.web.controller.system;
 
 import com.ruoyi.app.domain.village.CctVillage;
+import com.ruoyi.app.domain.wallet.CctUserMoney;
+import com.ruoyi.app.service.me.ICctMeMessageService;
 import com.ruoyi.app.service.task.ICctUserTaskService;
 import com.ruoyi.app.service.village.ICctVillageService;
+import com.ruoyi.app.service.wallet.ICctUserMoneyService;
 import com.ruoyi.common.annotation.Log;
 import com.ruoyi.common.constant.UserConstants;
 import com.ruoyi.common.core.controller.BaseController;
@@ -53,6 +56,11 @@ public class SysUserController extends BaseController {
 
     @Autowired
     private ICctVillageService villageService;
+    @Autowired
+    private ICctMeMessageService meMessageService;
+
+    @Autowired
+    private ICctUserMoneyService userMoneyService;
 
     @RequiresPermissions("system:user:view")
     @GetMapping()
@@ -234,6 +242,8 @@ public class SysUserController extends BaseController {
     }
 
     /**
+     *
+     *
      * 查询用户详情信息
      * param userId
      */
@@ -242,12 +252,22 @@ public class SysUserController extends BaseController {
     public AjaxResult userDetails(SysUser user) {
         SysUser sysUser = userService.selectUserById(user.getUserId());
         Map resultMap = iCctUserTaskService.selectUserTaskStatusCount(user.getUserId());
-        JSONObject jsonObject = new JSONObject();
-        jsonObject.put("user", sysUser);
+        //消息数量 等于0 :没有未读消息  大于0:表示消息条数
+        int i = meMessageService.selectNreadCount(user.getUserId().intValue());
+        //查询用户余额
+        CctUserMoney userMoney = userMoneyService.selectCctUserMoneyUserId(user.getUserId().intValue());
+        //查询对应村庄
+        String s = villageService.correspondenceVillager(user.getUserId().intValue());
+        JSONObject jsonObject = new JSONObject();jsonObject.put("user", sysUser);
         jsonObject.put("unfinished", resultMap.get("unfinished"));
         jsonObject.put("finish", resultMap.get("finish"));
         jsonObject.put("user", sysUser);
+        jsonObject.put("message", i);
+        jsonObject.put("userMoney", userMoney.getMoney());
+        jsonObject.put("villager", s);
+
         return AjaxResult.success(jsonObject);
+
     }
 
     /**

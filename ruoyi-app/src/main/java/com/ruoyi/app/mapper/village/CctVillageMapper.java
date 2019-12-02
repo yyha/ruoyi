@@ -29,6 +29,14 @@ public interface CctVillageMapper {
     public List<CctVillage> selectCctVillageList(CctVillage cctVillage);
 
     /**
+     * 村民对应的村庄
+     *
+     * @param userId 用户id
+     * @return 村庄名字
+     */
+    public String correspondenceVillager(Integer userId);
+
+    /**
      * 新增村庄
      *
      * @param cctVillage 村庄
