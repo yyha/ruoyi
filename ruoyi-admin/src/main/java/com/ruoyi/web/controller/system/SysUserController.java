@@ -258,7 +258,12 @@ public class SysUserController extends BaseController {
         CctUserMoney userMoney = userMoneyService.selectCctUserMoneyUserId(user.getUserId().intValue());
         //查询对应村庄
         String s = villageService.correspondenceVillager(user.getUserId().intValue());
-        JSONObject jsonObject = new JSONObject();jsonObject.put("user", sysUser);
+        SysUser newUser = new SysUser();
+        newUser.setAvatar(sysUser.getAvatar());
+        newUser.setUserName(sysUser.getUserName());
+        newUser.setSex(sysUser.getSex());
+        newUser.setUserId(sysUser.getUserId());
+        JSONObject jsonObject = new JSONObject();jsonObject.put("user", newUser);
         jsonObject.put("unfinished", resultMap.get("unfinished"));
         jsonObject.put("finish", resultMap.get("finish"));
         jsonObject.put("user", sysUser);
