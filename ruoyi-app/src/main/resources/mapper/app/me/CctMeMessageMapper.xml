@@ -63,6 +63,15 @@
           b.send_time DESC
     </select>
 
+    <select id="selectNreadCount" resultType="int">
+        select  sum(t) from
+					(select count(*) t from cct_user_notice
+					where u_id=#{userId} and isread='N' union
+
+					select count(*) t from cct_me_message
+					where user_id=#{userId} and isread='N') as tt
+    </select>
+
     <select id="selectCctMeMessageById" parameterType="Long" resultMap="CctMeMessageResult">
         <include refid="selectCctMeMessageVo"/>
         where id = #{id}

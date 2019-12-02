@@ -37,6 +37,13 @@ public interface ICctMeMessageService
     public List<CctMeMessage> selectCctMeMessageList(CctMeMessage cctMeMessage);
 
     /**
+     * 查询未读数量
+     *
+     * @param userId 用户id
+     * @return 数量
+     */
+    public int selectNreadCount(Integer userId);
+    /**
      * 新增
      * 
      * @param cctMeMessage

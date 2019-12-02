@@ -43,6 +43,8 @@ public class CctVillageServiceImpl implements ICctVillageService {
         return cctVillageMapper.selectCctVillageList(cctVillage);
     }
 
+
+
     /**
      * 新增村庄
      *
@@ -52,6 +54,17 @@ public class CctVillageServiceImpl implements ICctVillageService {
     @Override
     public int insertCctVillage(CctVillage cctVillage) {
         return cctVillageMapper.insertCctVillage(cctVillage);
+    }
+
+    /**
+     * 村民对应的村庄
+     *
+     * @param userId 用户id
+     * @return 村庄名字
+     */
+    @Override
+    public String correspondenceVillager(Integer userId) {
+        return cctVillageMapper.correspondenceVillager(userId);
     }
 
     /**

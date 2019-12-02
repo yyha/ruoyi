@@ -29,6 +29,14 @@ public interface CctMeMessageMapper
     public List<CctMeMessage> selectCctMeMessageList(CctMeMessage cctMeMessage);
 
     /**
+     * 查询未读数量
+     *
+     * @param cctMeMessage 【请填写功能名称】
+     * @return 数量
+     */
+    public int selectNreadCount(Integer userId);
+
+    /**
      * 新增【请填写功能名称】
      * 
      * @param cctMeMessage 【请填写功能名称】

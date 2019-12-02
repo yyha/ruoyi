@@ -41,6 +41,17 @@ public class CctUserMoneyServiceImpl implements ICctUserMoneyService
     }
 
     /**
+     *  根据用户id 查询 我的余额
+     *
+     * @param id 用户idID
+     * @return 对象
+     */
+    @Override
+    public CctUserMoney selectCctUserMoneyUserId(Integer id) {
+        return cctUserMoneyMapper.selectCctUserMoneyByUserId(id);
+    }
+
+    /**
      * 查询【请填写功能名称】列表
      * 
      * @param cctUserMoney 【请填写功能名称】

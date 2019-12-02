@@ -23,6 +23,14 @@ public interface ICctUserMoneyService
      */
     public CctUserMoney selectCctUserMoneyById(Integer id);
 
+/**
+     *  根据用户id 查询 我的余额
+     *
+     * @param id 用户idID
+     * @return 对象
+     */
+    public CctUserMoney selectCctUserMoneyUserId(Integer id);
+
     /**
      * 查询【请填写功能名称】列表
      * 
