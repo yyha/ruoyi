@@ -234,10 +234,15 @@ public class SysUserController extends BaseController {
     @PostMapping("/userDetails")
     @ResponseBody
     public AjaxResult userDetails(SysUser user) {
-        SysUser sysUser = userService.selectUserById(user.getUserId());
+        SysUser sysUser = userService.selectUserById(ShiroUtils.getUserId());
+        SysUser newUser = new SysUser();
+        newUser.setAvatar(sysUser.getAvatar());
+        newUser.setUserName(sysUser.getUserName());
+        newUser.setSex(sysUser.getSex());
+        newUser.setUserId(sysUser.getUserId());
         Map resultMap = iCctUserTaskService.selectUserTaskStatusCount(user.getUserId());
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("user", sysUser);
+        jsonObject.put("user", newUser);
         jsonObject.put("unfinished", resultMap.get("unfinished"));
         jsonObject.put("finish", resultMap.get("finish"));
         jsonObject.put("user", sysUser);

@@ -9,6 +9,7 @@ import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.page.TableDataInfo;
 import com.ruoyi.common.enums.BusinessType;
 import com.ruoyi.common.utils.poi.ExcelUtil;
+import com.ruoyi.framework.util.ShiroUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -42,14 +43,14 @@ public class CctUserAccountController extends BaseController
     /**
      * 查询【请填写功能名称】列表
      */
-    @RequiresPermissions("system:account:list")
-    @PostMapping("/list")
+//    @RequiresPermissions("system:account:list")
+    @GetMapping("/list")
     @ResponseBody
-    public TableDataInfo list(CctUserAccount cctUserAccount)
+    public AjaxResult list(CctUserAccount cctUserAccount)
     {
-        startPage();
+        cctUserAccount.setUId(Integer.valueOf(ShiroUtils.getUserId().toString()));
         List<CctUserAccount> list = cctUserAccountService.selectCctUserAccountList(cctUserAccount);
-        return getDataTable(list);
+        return AjaxResult.success("success",list);
     }
 
     /**
